@@ -7,13 +7,13 @@ RUN addgroup app && adduser --system --ingroup app app
 #munkakönyvtár definiálása
 WORKDIR /app
 # A package.json és package-lock.json fájlok másolása
-COPY frontend/package.json frontend/package-lock.json ./
+COPY package.json package-lock.json ./
 
 #függőségek telepítése
 RUN npm install
 
 #fájlok másolása a konténerbe
-COPY frontend/ .
+COPY . .
 
 #futtatási jogok beállítása a nem root usernek
 RUN chown -R app:app /app
