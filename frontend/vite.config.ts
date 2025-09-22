@@ -17,4 +17,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    host: '0.0.0.0',  // Expose to all network interfaces
+    port: 5173,
+    watch: {
+      usePolling: true,     // Így biztosabb lesz, hogy érzékeli a fájl módosításokat
+      interval: 1000,       // Polling intervallum ms-ban (opcionális)
+    }
+  },
 })
