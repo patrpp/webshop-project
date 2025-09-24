@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'app:import-products',
-    description: 'Imports products from a CSV file.',
+    description: 'Imports products from a CSV file or updates existing ones.',
 )]
 class ImportProductsCommand extends Command
 {
@@ -35,42 +35,79 @@ class ImportProductsCommand extends Command
 
         try {
             $csv = Reader::createFromPath($csvPath, 'r');
-            $csv->setDelimiter(';'); 
-            $csv->setHeaderOffset(0); // első sor a fejléc
+            $csv->setDelimiter(';');
+            $csv->setHeaderOffset(0);
             $records = $csv->getRecords();
 
             $imported = 0;
+            $updated = 0;
+
             foreach ($records as $record) {
-                // Duplikáció ellenőrzés név alapján
+                // Ellenőrzés, létezik-e már a termék név alapján
                 $existing = $this->entityManager
                     ->getRepository(Product::class)
                     ->findOneBy(['name' => $record['name']]);
 
                 if ($existing) {
-                    $output->writeln('<comment>Termék már létezik, kihagyva: ' . $record['name'] . '</comment>');
+                    $updatedFlag = false;
+
+                    // Frissítjük az image_url-t, ha szükséges
+                    if (!empty($record['image_url']) && $existing->getImageUrl() !== $record['image_url']) {
+                        $existing->setImageUrl($record['image_url']);
+                        $updatedFlag = true;
+                    }
+
+                    // Frissítjük a description-t (fix Lorem Ipsum)
+                    $newDescription = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+                    if ($existing->getDescription() !== $newDescription) {
+                        $existing->setDescription($newDescription);
+                        $updatedFlag = true;
+                    }
+
+                    // Frissítjük a category-t, ha szükséges
+                    if (isset($record['category']) && $existing->getCategory() !== $record['category']) {
+                        $existing->setCategory($record['category']);
+                        $updatedFlag = true;
+                    }
+
+                    // Frissítjük a category_id-t, ha szükséges
+                    if (isset($record['category_id']) && $existing->getCategoryId() !== $record['category_id']) {
+                        $existing->setCategoryId($record['category_id']);
+                        $updatedFlag = true;
+                    }
+
+                    if ($updatedFlag) {
+                        $this->entityManager->persist($existing);
+                        $updated++;
+                        $output->writeln('<comment>Termék frissítve: ' . $record['name'] . '</comment>');
+                    } else {
+                        $output->writeln('<comment>Termék már létezik, kihagyva: ' . $record['name'] . '</comment>');
+                    }
                     continue;
                 }
 
                 $product = new Product();
                 $product->setName($record['name']);
                 $product->setPrice((int)$record['price']);
-                $product->setNetPrice((int)round($record['price'] / 1.27)); // ÁFA kiszámítása, ha 27%
+                $product->setNetPrice((int)round($record['price'] / 1.27));
                 $product->setImageUrl($record['image_url'] ?? '');
+                $product->setCategory($record['category'] ?? 'N/A');
+                $product->setCategoryId($record['category_id'] ?? 'N/A');
 
-                // Lorem ipsum szöveg hozzáadása fiktív leírásként (nincs description meződ, szóval pl. kategóriában használható)
-                $product->setCategory('Lorem ipsum category');
-                $product->setCategoryId('CATEG_' . random_int(1000, 9999));
+                $product->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
 
-                // Egyedi identifier (pl. hash alapú)
                 $identifier = strtoupper(substr(md5($record['name']), 0, 9));
                 $product->setIdentifier($identifier);
 
                 $this->entityManager->persist($product);
                 $imported++;
+
+                $output->writeln('<info>Új termék hozzáadva: ' . $record['name'] . '</info>');
             }
 
             $this->entityManager->flush();
-            $output->writeln("<info>Sikeres import: {$imported} termék.</info>");
+
+            $output->writeln("<info>Import kész. Új termékek: {$imported}, frissített termékek: {$updated}.</info>");
 
             return Command::SUCCESS;
         } catch (\Exception $e) {

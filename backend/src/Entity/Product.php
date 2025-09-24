@@ -34,6 +34,9 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image_url = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -113,6 +116,17 @@ class Product
     public function setImageUrl(?string $image_url): static
     {
         $this->image_url = $image_url;
+        return $this;
+    }
+   
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
         return $this;
     }
 }

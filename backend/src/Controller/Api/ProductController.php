@@ -23,7 +23,9 @@ class ProductController extends AbstractController
                 'price' => $product->getPrice(),
                 'net_price' => $product->getNetPrice(),
                 'category' => $product->getCategory(),
+                'category_id' => $product->getCategoryId(),
                 'image_url' => $product->getImageUrl(),
+                'description' => $product->getDescription(),
             ];
         }
 
