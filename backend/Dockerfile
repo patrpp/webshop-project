@@ -15,5 +15,9 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /e
 # Projekt bemásolása
 COPY . .
 
+# .env.docker átnevezése .env-re (ha létezik)
+RUN if [ -f .env.docker ]; then cp .env.docker .env; fi
+
 # Függőségek telepítése
 RUN composer install
+

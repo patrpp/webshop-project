@@ -110,7 +110,7 @@ class Product
         return $this->image_url;
     }
 
-    public function setImageUrl(string $image_url): static
+    public function setImageUrl(?string $image_url): static
     {
         $this->image_url = $image_url;
         return $this;

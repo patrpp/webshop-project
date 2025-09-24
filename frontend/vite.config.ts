@@ -1,11 +1,12 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import vueDevTools from 'vite-plugin-vue-devtools'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx'; // ✅ Helyes import
+import vueDevTools from 'vite-plugin-vue-devtools';
+import tailwindcss from 'tailwindcss'; // ✅ Ez nem kell pluginként itt
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -14,15 +15,15 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: {
-    host: '0.0.0.0',  // Expose to all network interfaces
+    host: '0.0.0.0',
     port: 5173,
     watch: {
-      usePolling: true,     // Így biztosabb lesz, hogy érzékeli a fájl módosításokat
-      interval: 1000,       // Polling intervallum ms-ban (opcionális)
-    }
+      usePolling: true,
+      interval: 1000,
+    },
   },
-})
+});
