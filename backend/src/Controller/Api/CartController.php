@@ -19,27 +19,27 @@ class CartController extends AbstractController
         $this->productRepository = $productRepository;
     }
 
-  #[Route('', name: 'get', methods: ['GET'])]
-public function getCart(SessionInterface $session): JsonResponse
-{
-    $cart = $session->get('cart', []);
-    
-    foreach ($cart as $id => $item) {
-        $product = $this->productRepository->find($id);
-        if ($product) {
-            $cart[$id]['image'] = $product->getImageUrl();
-        }
-    }
-    
-    $total = $this->calculateTotal($cart);
-    
-    $session->set('cart', $cart);
+    #[Route('', name: 'get', methods: ['GET'])]
+    public function getCart(SessionInterface $session): JsonResponse
+    {
+        $cart = $session->get('cart', []);
 
-    return $this->json([
-        'items' => array_values($cart),
-        'total' => $total,
-    ]);
-}
+        foreach ($cart as $id => $item) {
+            $product = $this->productRepository->find($id);
+            if ($product) {
+                $cart[$id]['image'] = $product->getImageUrl();
+            }
+        }
+
+        $total = $this->calculateTotal($cart);
+
+        $session->set('cart', $cart);
+
+        return $this->json([
+            'items' => array_values($cart),
+            'total' => $total,
+        ]);
+    }
 
     #[Route('', name: 'add', methods: ['POST'])]
     public function addItem(Request $request, SessionInterface $session): JsonResponse
@@ -127,6 +127,17 @@ public function getCart(SessionInterface $session): JsonResponse
             'total' => $total,
         ]);
     }
+    #[Route('/clear', name: 'clear', methods: ['POST'])]
+    public function clear(SessionInterface $session): JsonResponse
+    {
+        $session->remove('cart');
+
+        return $this->json([
+            'items' => [],
+            'total' => 0,
+        ]);
+    }
+
 
     private function calculateTotal(array $cart): float
     {

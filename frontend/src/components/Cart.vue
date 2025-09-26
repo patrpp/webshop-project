@@ -9,10 +9,6 @@ onMounted(() => {
   cart.init()
 })
 
-function addSampleProduct() {
-  cart.addToCart({ id: 1, name: 'Teszt termék', price: 999 })
-}
-
 // ide jönnek az increment és decrement függvények
 function increment(item: CartItem) {
   cart.updateItemQuantity(item.id, item.quantity + 1)

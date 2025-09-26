@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import type { CartItem } from '@/stores/cartStore'
 
+const cartStore = useCartStore()
 const cart = useCartStore()
 
 onMounted(() => {
@@ -35,15 +36,17 @@ function decrement(item: CartItem) {
           :key="item.id"
           class="flex items-center bg-white rounded-lg shadow-sm p-4"
         >
-      <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 mr-4">
-  <img
-    v-if="item.image"
-    :src="item.image.startsWith('http') ? item.image : 'http://127.0.0.1:8000' + item.image"
-    alt="Product image"
-    class="w-full h-full object-cover"
-  />
-  <div v-else class="text-gray-400 italic">Nincs kép</div>
-</div>
+          <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 mr-4">
+            <img
+              v-if="item.image"
+              :src="
+                item.image.startsWith('http') ? item.image : 'http://127.0.0.1:8000' + item.image
+              "
+              alt="Product image"
+              class="w-full h-full object-cover"
+            />
+            <div v-else class="text-gray-400 italic">Nincs kép</div>
+          </div>
 
           <!-- Adatok + vezérlők -->
           <div class="flex-1 flex flex-col justify-between h-full">
@@ -57,22 +60,34 @@ function decrement(item: CartItem) {
                 @click="decrement(item)"
                 class="w-8 h-8 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded flex items-center justify-center transition"
                 :disabled="item.quantity <= 1"
-              >−</button>
+              >
+                −
+              </button>
 
               <span class="px-3 text-gray-800">{{ item.quantity }}</span>
 
               <button
                 @click="increment(item)"
                 class="w-8 h-8 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded flex items-center justify-center transition"
-              >+</button>
+              >
+                +
+              </button>
 
               <button
                 @click="cart.removeItem(item.id)"
                 class="ml-auto p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition"
                 aria-label="Törlés"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                  <path d="M3 6h18v2H3V6zm2 4h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10zm3 3v6h2v-6H8zm4 0v6h2v-6h-2zm4 0v6h2v-6h-2zM9 4V2h6v2h5v2H4V4h5z"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M3 6h18v2H3V6zm2 4h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10zm3 3v6h2v-6H8zm4 0v6h2v-6h-2zm4 0v6h2v-6h-2zM9 4V2h6v2h5v2H4V4h5z"
+                  />
                 </svg>
               </button>
             </div>
@@ -83,12 +98,19 @@ function decrement(item: CartItem) {
       <p class="mt-8 text-xl font-semibold text-gray-900">
         Összesen: <span class="text-indigo-600">{{ cart.total }} Ft</span>
       </p>
-
+      <p>
+        <button
+          @click="cartStore.clearCartFromServer"
+          class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Kosár ürítése
+        </button>
+      </p>
       <button
         v-if="cart.items.length > 0"
         class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded transition"
       >
-       Megrendelés
+        Megrendelés
       </button>
     </div>
   </div>

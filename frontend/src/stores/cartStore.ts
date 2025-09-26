@@ -79,6 +79,17 @@ export const useCartStore = defineStore('cart', {
         console.error('Hiba a kosárból törléskor:', error)
       }
     },
+async clearCartFromServer() {
+  console.log('clearCartFromServer hívva')
+  try {
+    const response = await axios.post('/api/cart/clear', {}, { withCredentials: true })
+    this.items = response.data.items
+    this.total = response.data.total
+    this.clearCart() // törli a localStorage-et is
+  } catch (error) {
+    console.error('Hiba a kosár ürítésekor a szerveren:', error)
+  }
+},
 
     clearCart() {
       console.log('clearCart hívva')
