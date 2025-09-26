@@ -38,6 +38,7 @@ async function addToCart(product: Product) {
       id: product.id,
       name: product.name,
       price: product.price,
+      image: ''
     })
     alert(`${product.name} hozzáadva a kosárhoz! 🛒`)
   } catch (error) {
