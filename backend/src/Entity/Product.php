@@ -129,4 +129,5 @@ class Product
         $this->description = $description;
         return $this;
     }
+    
 }
