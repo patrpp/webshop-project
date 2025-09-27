@@ -1,5 +1,6 @@
 <template>
   <Header />
+  
   <main class="pt-20 px-4">
     <div class="min-h-screen bg-gray-100 p-6">
       <router-view />

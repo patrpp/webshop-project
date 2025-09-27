@@ -60,7 +60,7 @@ async function submitOrder() {
     console.log('Rendelés sikeres:', response.data)
     alert('Sikeres rendelés!')
 
-    cart.clear()
+    cart.clearCartFromServer()
   } catch (error) {
     console.error('Hiba történt a rendelés során:', error)
     alert('Hiba történt a rendelés során.')

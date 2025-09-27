@@ -3,7 +3,6 @@ import { onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import type { CartItem } from '@/stores/cartStore'
 
-const cartStore = useCartStore()
 const cart = useCartStore()
 
 onMounted(() => {
@@ -100,18 +99,20 @@ function decrement(item: CartItem) {
       </p>
       <p>
         <button
-          @click="cartStore.clearCartFromServer"
+          @click="cart.clearCartFromServer"
           class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
         >
           Kosár ürítése
         </button>
       </p>
       <button
-        v-if="cart.items.length > 0"
-        class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded transition"
-      >
-        Megrendelés
-      </button>
+  v-if="cart.items.length > 0"
+  @click="$router.push('/checkout')"
+  class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded transition"
+>
+  Megrendelés
+</button>
+
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import ProductView from '@/views/ProductView.vue'
 import ProductList from '@/components/ProductList.vue'
 import Cart from '@/views/CartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
+import AboutView from '../views/AboutView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

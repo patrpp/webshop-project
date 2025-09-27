@@ -1,7 +1,5 @@
 <template>
   <div class="max-w-4xl mx-auto p-6">
-    <button @click="$router.back()" class="mb-4 text-blue-600 hover:underline">← Vissza</button>
-
     <div v-if="product" class="bg-white rounded shadow p-6 flex flex-col md:flex-row gap-6">
       <img
         v-if="product.image_url"
@@ -48,7 +46,14 @@ onMounted(async () => {
     console.error('Hiba a termék betöltésekor:', error)
   }
 })
-
+async function email() {
+  try {
+    await axios.post(`http://127.0.0.1:8000/api/email`, {})
+    alert('Email sikeresen elküldve! 📧')
+  } catch (error) {
+    alert('Hiba az email küldésekor:', error)
+  }
+}
 async function addToCart(prod) {
   try {
     await cart.addToCart({
