@@ -24,7 +24,7 @@ class OrderController extends AbstractController
         $email = $data['email'] ?? '';
         $items = $data['items'] ?? [];
         $content = <<<EOD
-Új rendelés érkezett:
+Köszönjük rendelését!
 
 Név: $name
 Cím: $zip $city, $address
@@ -32,13 +32,22 @@ Telefonszám: $phone
 Email: $email
 
 Rendelt termékek:
+
 EOD;
+        $totalPrice = 0;
+
 
         foreach ($items as $item) {
             $itemName = $item['name'] ?? 'Ismeretlen termék';
             $itemQty = $item['quantity'] ?? 1;
-            $content .= "\n- $itemQty x $itemName";
+            $itemPrice = $item['price'] ?? 0;
+            $lineTotal = $itemQty * $itemPrice;
+            $totalPrice += $lineTotal;
+
+            $content .= "- $itemQty x $itemName (Egységár: $itemPrice Ft) - Összesen: $lineTotal Ft\n";
         }
+
+        $content .= "\nÖsszesen: $totalPrice Ft";
 
 
         // E-mail a vásárlónak
@@ -47,14 +56,14 @@ EOD;
             ->to($email)
             ->bcc('cc@example.com')
             ->subject('Rendelés megerősítése')
-            ->text("Köszönjük rendelését!\n\n$content");
+            ->text($content);
 
-        // E-mail belső címre
+        /* E-mail belső címre
         $internalEmail = (new Email())
             ->from('webshop@yourdomain.com')
             ->to('internal@example.com')
             ->subject('Új rendelés érkezett')
-            ->text($content);
+            ->text($content); */
 
         $mailer->send($userEmail);
         //Mailtrap nem tud 2 emailt küldeni az alap verzióban 
