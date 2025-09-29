@@ -16,35 +16,40 @@ class ProductRepository extends ServiceEntityRepository
     public function getBrandsFromCategory(): array
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('DISTINCT p.category');
+            ->select('DISTINCT p.category, p.name');
 
-        $categories = $qb->getQuery()->getResult();
+        $results = $qb->getQuery()->getArrayResult();
 
         $brands = [];
 
-        foreach ($categories as $row) {
-            $category = $row['category'];
+        foreach ($results as $row) {
+            $category = $row['category'] ?? '';
+            $name = $row['name'] ?? '';
 
-            // Vegyük az utolsó szót (feltételezve, hogy az a brand)
-            $words = preg_split('/\s+/', trim($category));
-            if ($words && count($words) > 0) {
-                $brand = $words[count($words) - 1]; // utolsó szó
-                $brands[] = $brand;
+            $brandCandidate = '';
+
+            if (strpos($category, '>') !== false) {
+                $parts = array_map('trim', explode('>', $category));
+                $brandCandidate = end($parts);
+            } else {
+                // Nincs > jel, az első szó a termék nevéből
+                $words = preg_split('/\s+/', trim($name));
+                $brandCandidate = $words[0] ?? '';
+            }
+
+            $brandCandidateLower = mb_strtolower($brandCandidate);
+
+            if ($brandCandidate && !in_array($brandCandidateLower, array_map('mb_strtolower', $brands), true)) {
+                // Nagybetűs formátum 
+                $brandCandidateFormatted = mb_convert_case($brandCandidate, MB_CASE_TITLE, "UTF-8");
+                $brands[] = $brandCandidateFormatted;
             }
         }
 
-        // Eltávolítjuk a "category" elemet, ha benne van
-        $brands = array_filter($brands, function ($b) {
-            return strtolower($b) !== 'category';
-        });
-
-        // Egyedi, rendezett lista
-        $brands = array_values(array_unique($brands));
         sort($brands);
 
         return $brands;
     }
-
 
     public function findByFilters(?string $q, ?string $season, ?int $diameter, ?string $brand, ?int $limit, ?int $offset)
     {
@@ -85,8 +90,16 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('diameter2', '%' . $diameter . '"%');
         }
         if ($brand) {
-            $qb->andWhere('p.category LIKE :brand')
-                ->setParameter('brand', '%' . $brand);
+            $brands = explode(',', $brand);
+            $brandOr = $qb->expr()->orX();
+
+            foreach ($brands as $index => $b) {
+                $paramName = 'brand_kw_' . $index;
+                $brandOr->add($qb->expr()->like('p.category', ':' . $paramName));
+                $qb->setParameter($paramName, '%' . $b . '%');
+            }
+
+            $qb->andWhere($brandOr);
         }
 
         return $qb->getQuery()
@@ -104,8 +117,16 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('q', '%' . $q . '%');
         }
         if ($brand) {
-            $qb->andWhere('p.category LIKE :brand')
-                ->setParameter('brand', '%' . $brand);
+            $brands = explode(',', $brand);
+            $brandOr = $qb->expr()->orX();
+
+            foreach ($brands as $index => $b) {
+                $paramName = 'brand_kw_' . $index;
+                $brandOr->add($qb->expr()->like('p.category', ':' . $paramName));
+                $qb->setParameter($paramName, '%' . $b . '%');
+            }
+
+            $qb->andWhere($brandOr);
         }
         if ($season) {
             $seasonKeywords = [
