@@ -20,6 +20,12 @@
         <option value="">Átmérő</option>
         <option v-for="d in diameters" :key="d" :value="d">{{ d }}"</option>
       </select>
+      <button
+        @click="clearFilters"
+        class="w-full md:w-auto px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+      >
+        Szűrők törlése
+      </button>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -55,6 +61,25 @@
         </div>
       </router-link>
     </div>
+    <div class="flex justify-center items-center gap-2 mt-6" v-if="totalPages > 1">
+      <button
+        @click="page--"
+        :disabled="page === 1"
+        class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+      >
+        Előző
+      </button>
+
+      <span>Oldal {{ page }} / {{ totalPages }}</span>
+
+      <button
+        @click="page++"
+        :disabled="page === totalPages"
+        class="px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+      >
+        Következő
+      </button>
+    </div>
   </div>
 </template>
 
@@ -65,11 +90,15 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 const products = ref<any[]>([])
+
 const query = ref('')
 const season = ref('')
 const diameter = ref<number | ''>('')
-
 const diameters = [13, 14, 15, 16, 17, 18, 19, 20]
+
+const page = ref(1)
+const limit = 24
+const totalPages = ref(1)
 
 const cart = useCartStore()
 const route = useRoute()
@@ -82,24 +111,40 @@ async function loadProducts() {
         q: query.value,
         season: season.value,
         diameter: diameter.value || undefined,
+        page: page.value,
+        limit: limit,
       },
     })
-    products.value = response.data
+    products.value = response.data.data
+    totalPages.value = response.data.total_pages
   } catch (error) {
     console.error('Hiba a termékek lekérésekor:', error)
   }
 }
 
 watch([query, season, diameter], () => {
+  if (page.value !== 1) {
+    page.value = 1 
+  } else {
+    updateRoute()
+  }
+})
+
+watch(page, () => {
+  updateRoute()
+})
+
+function updateRoute() {
   router.replace({
     path: '/products',
     query: {
       ...(query.value ? { q: query.value } : {}),
       ...(season.value ? { season: season.value } : {}),
       ...(diameter.value ? { diameter: diameter.value.toString() } : {}),
+      ...(page.value !== 1 ? { page: page.value.toString() } : {}),
     },
   })
-})
+}
 
 watch(
   () => route.query,
@@ -107,10 +152,22 @@ watch(
     query.value = (route.query.q as string) || ''
     season.value = (route.query.season as string) || ''
     diameter.value = route.query.diameter ? Number(route.query.diameter) : ''
+    page.value = route.query.page ? Number(route.query.page) : 1
     loadProducts()
   },
   { immediate: true },
 )
+function clearFilters() {
+  query.value = ''
+  season.value = ''
+  diameter.value = ''
+  page.value = 1
+
+  router.replace({
+    path: '/products',
+    query: {},
+  })
+}
 
 async function addToCart(product: any) {
   try {
@@ -120,7 +177,7 @@ async function addToCart(product: any) {
       price: product.price,
       image: product.image_url,
     })
-    alert(`${product.name} hozzáadva a kosárhoz! 🛒`)
+    alert(`${product.name} hozzáadva a kosárhoz!`)
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
   }

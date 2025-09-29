@@ -46,14 +46,7 @@ onMounted(async () => {
     console.error('Hiba a termék betöltésekor:', error)
   }
 })
-async function email() {
-  try {
-    await axios.post(`http://127.0.0.1:8000/api/email`, {})
-    alert('Email sikeresen elküldve! 📧')
-  } catch (error) {
-    alert('Hiba az email küldésekor:', error)
-  }
-}
+
 async function addToCart(prod) {
   try {
     await cart.addToCart({
@@ -62,7 +55,7 @@ async function addToCart(prod) {
       price: prod.price,
       image: prod.image_url,
     })
-    alert(`${prod.name} hozzáadva a kosárhoz! 🛒`)
+    alert(`${prod.name} hozzáadva a kosárhoz!`)
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
   }

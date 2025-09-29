@@ -16,9 +16,13 @@ class FilterController extends AbstractController
         $query = $request->query->get('q');
         $season = $request->query->get('season');
         $diameter = $request->query->get('diameter');
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = (int) $request->query->get('limit', 24);
+        $offset = ($page - 1) * $limit;
 
-        // Lekérdezés a ProductRepository-ban szűréssel
-        $products = $productRepository->findByFilters($query, $season, $diameter);
+        $products = $productRepository->findByFilters($query, $season, $diameter, $limit, $offset);
+
+        $total = $productRepository->countByFilters($query, $season, $diameter);
 
         $data = [];
         foreach ($products as $product) {
@@ -34,6 +38,12 @@ class FilterController extends AbstractController
             ];
         }
 
-        return $this->json($data);
+        return $this->json([
+            'data' => $data,
+            'page' => $page,
+            'limit' => $limit,
+            'total' => $total,
+            'total_pages' => ceil($total / $limit),
+        ]);
     }
 }
