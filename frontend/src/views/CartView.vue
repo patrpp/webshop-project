@@ -51,7 +51,7 @@ function decrement(item: CartItem) {
           <div class="flex-1 flex flex-col justify-between h-full">
             <div>
               <p class="font-medium text-gray-900">{{ item.name }}</p>
-              <p class="text-sm text-gray-600 mt-1">{{ item.price }} Ft</p>
+              <p class="text-sm text-gray-600 mt-1">{{ $formatPrice(item.price) }} Ft</p>
             </div>
 
             <div class="flex items-center mt-3 space-x-3">
@@ -94,25 +94,25 @@ function decrement(item: CartItem) {
         </li>
       </ul>
 
-      <p class="mt-8 text-xl font-semibold text-gray-900">
-        Összesen: <span class="text-indigo-600">{{ cart.total }} Ft</span>
-      </p>
-      <p>
+      <div class="mt-8 flex items-center justify-between gap-4">
+        <p class="text-xl font-semibold text-gray-900">
+          Összesen: <span class="bold text-black-600">{{ $formatPrice(cart.total) }} Ft</span>
+        </p>
         <button
           @click="cart.clearCartFromServer"
           class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
         >
           Kosár ürítése
         </button>
-      </p>
-      <button
-  v-if="cart.items.length > 0"
-  @click="$router.push('/checkout')"
-  class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded transition"
->
-  Megrendelés
-</button>
+      </div>
 
+      <button
+        v-if="cart.items.length > 0"
+        @click="$router.push('/checkout')"
+        class="btn-grad mt-4 w-full"
+      >
+        Megrendelés
+      </button>
     </div>
   </div>
 </template>

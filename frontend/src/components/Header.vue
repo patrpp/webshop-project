@@ -12,14 +12,6 @@
             />
           </router-link>
         </div>
-        <div class="hidden md:block w-1/3">
-          <input
-            type="text"
-            placeholder="Keresés..."
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
-          />
-        </div>
-
         <!-- Menü gomb (mobil) -->
         <div class="md:hidden">
           <button @click="toggleMenu" class="text-gray-600 focus:outline-none">
@@ -74,7 +66,7 @@
         <router-link to="/contact" class="block text-gray-700 hover:text-red-600"
           >Kapcsolat</router-link
         >
-        <router-link to="/cart" class="block text-gray-700 hover:text-red-600 flex items-center">
+        <router-link to="/cart" class="text-gray-700 hover:text-red-600 flex items-center">
           Kosár
           <span
             v-if="cart.items.length > 0"

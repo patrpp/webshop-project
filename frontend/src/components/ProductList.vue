@@ -21,7 +21,7 @@
       </select>
       <button
         @click="clearFilters"
-        class="w-full md:w-auto px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+        class="w-full md:w-auto px-3 py-2 bg-gray-300 rounded hover:bg-gray-400"
       >
         Szűrők törlése
       </button>
@@ -61,15 +61,10 @@
           <h2 class="text-lg font-semibold">{{ product.name }}</h2>
           <div class="mt-2 flex items-center justify-between">
             <div>
-              <p class="text-xl font-bold text-red-700">{{ product.price }} Ft</p>
-              <p class="text-sm text-gray-500">{{ product.net_price }} Ft + ÁFA</p>
+              <p class="text-xl font-bold text-red-700">{{ $formatPrice(product.price) }} Ft</p>
+              <p class="text-sm text-gray-500">{{ $formatPrice(product.net_price) }} Ft + ÁFA</p>
             </div>
-            <button
-              @click.stop.prevent="addToCart(product)"
-              class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Kosárba
-            </button>
+            <button @click.stop.prevent="addToCart(product)" class="btn-grad">Kosárba</button>
           </div>
         </div>
       </router-link>

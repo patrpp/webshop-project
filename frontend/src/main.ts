@@ -12,8 +12,13 @@ import router from './router'
 
 const app = createApp(App)
 
+app.config.globalProperties.$formatPrice = (value: number) => {
+  return new Intl.NumberFormat('hu-HU').format(value)
+}
+
 const pinia = createPinia()
 app.use(pinia)       
 app.use(router)
 
 app.mount('#app')
+

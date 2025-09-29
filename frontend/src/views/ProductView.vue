@@ -9,17 +9,12 @@
       />
       <div class="md:w-1/2">
         <h1 class="text-3xl font-bold mb-2">{{ product.name }}</h1>
-        <p class="text-sm text-gray-500 mb-4">{{ product.category}}</p>
-        <p class="text-xl font-semibold text-red-700 mb-4">{{ product.price }} Ft</p>
-        <p class="text-sm text-gray-500 mb-4">{{ product.net_price }} Ft + ÁFA</p>
+        <p class="text-sm text-gray-500 mb-4">{{ product.category }}</p>
+        <p class="text-xl font-semibold text-red-700 mb-4">{{ $formatPrice(product.price) }} Ft</p>
+        <p class="text-sm text-gray-500 mb-4">{{ $formatPrice(product.net_price) }} Ft + ÁFA</p>
         <p class="mb-6 text-gray-700" v-if="product.description">{{ product.description }}</p>
 
-        <button
-          @click="addToCart(product)"
-          class="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Kosárba
-        </button>
+        <button @click="addToCart(product)" class="btn-grad">Kosárba</button>
       </div>
     </div>
 

@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useCartStore } from '@/stores/cartStore'
- 
 
 const cart = useCartStore()
 
@@ -38,14 +37,13 @@ async function addToCart(product: Product) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: ''
+      image: '',
     })
     alert(`${product.name} hozzáadva a kosárhoz! `)
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
   }
 }
-
 </script>
 
 <template>
@@ -67,15 +65,10 @@ async function addToCart(product: Product) {
         <h2 class="text-lg font-semibold">{{ product.name }}</h2>
         <div class="mt-2 flex items-center justify-between">
           <div>
-            <p class="text-xl font-bold text-red-700">{{ product.price }} Ft</p>
-            <p class="text-sm text-gray-500">{{ product.net_price }} Ft + ÁFA</p>
+            <p class="text-xl font-bold text-red-700">{{ $formatPrice(product.price) }} Ft</p>
+            <p class="text-sm text-gray-500">{{ $formatPrice(product.net_price) }} Ft + ÁFA</p>
           </div>
-          <button
-            @click.stop.prevent="addToCart(product)"
-            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            Kosárba
-          </button>
+          <button @click.stop.prevent="addToCart(product)" class="btn-grad">Kosárba</button>
         </div>
       </div>
     </router-link>

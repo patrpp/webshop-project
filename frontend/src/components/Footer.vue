@@ -1,7 +1,6 @@
 <template>
   <footer class="w-full border-t border-gray-200 bg-white shadow-sm p-6">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      
       <div class="flex items-center gap-2 text-gray-700">
         <a
           href="https://github.com/patrpp/marso_project"
@@ -29,4 +28,3 @@
     </div>
   </footer>
 </template>
-
