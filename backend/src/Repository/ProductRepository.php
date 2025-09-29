@@ -13,8 +13,40 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+    public function getBrandsFromCategory(): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('DISTINCT p.category');
 
-    public function findByFilters(?string $q, ?string $season, ?int $diameter, ?int $limit, ?int $offset)
+        $categories = $qb->getQuery()->getResult();
+
+        $brands = [];
+
+        foreach ($categories as $row) {
+            $category = $row['category'];
+
+            // Vegyük az utolsó szót (feltételezve, hogy az a brand)
+            $words = preg_split('/\s+/', trim($category));
+            if ($words && count($words) > 0) {
+                $brand = $words[count($words) - 1]; // utolsó szó
+                $brands[] = $brand;
+            }
+        }
+
+        // Eltávolítjuk a "category" elemet, ha benne van
+        $brands = array_filter($brands, function ($b) {
+            return strtolower($b) !== 'category';
+        });
+
+        // Egyedi, rendezett lista
+        $brands = array_values(array_unique($brands));
+        sort($brands);
+
+        return $brands;
+    }
+
+
+    public function findByFilters(?string $q, ?string $season, ?int $diameter, ?string $brand, ?int $limit, ?int $offset)
     {
         $qb = $this->createQueryBuilder('p');
         if ($q) {
@@ -52,13 +84,17 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('diameter1', '%R' . $diameter . '%')
                 ->setParameter('diameter2', '%' . $diameter . '"%');
         }
+        if ($brand) {
+            $qb->andWhere('p.category LIKE :brand')
+                ->setParameter('brand', '%' . $brand);
+        }
 
         return $qb->getQuery()
             ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->getResult();
     }
-    public function countByFilters(?string $q, ?string $season, ?int $diameter): int
+    public function countByFilters(?string $q, ?string $season, ?int $diameter, ?string $brand): int
     {
         $qb = $this->createQueryBuilder('p')
             ->select('COUNT(p.id)');
@@ -67,7 +103,10 @@ class ProductRepository extends ServiceEntityRepository
             $qb->andWhere('p.name LIKE :q OR p.description LIKE :q')
                 ->setParameter('q', '%' . $q . '%');
         }
-
+        if ($brand) {
+            $qb->andWhere('p.category LIKE :brand')
+                ->setParameter('brand', '%' . $brand);
+        }
         if ($season) {
             $seasonKeywords = [
                 'téli' => ['téli', 'winter', 'snow', 'TS', 'polaris'],

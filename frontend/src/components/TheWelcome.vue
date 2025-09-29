@@ -40,7 +40,7 @@ async function addToCart(product: Product) {
       price: product.price,
       image: ''
     })
-    alert(`${product.name} hozzáadva a kosárhoz! 🛒`)
+    alert(`${product.name} hozzáadva a kosárhoz! `)
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
   }
@@ -65,7 +65,6 @@ async function addToCart(product: Product) {
       />
       <div class="p-4 mt-auto">
         <h2 class="text-lg font-semibold">{{ product.name }}</h2>
-        <p class="text-sm text-gray-600">{{ product.category }}</p>
         <div class="mt-2 flex items-center justify-between">
           <div>
             <p class="text-xl font-bold text-red-700">{{ product.price }} Ft</p>

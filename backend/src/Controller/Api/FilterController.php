@@ -16,13 +16,14 @@ class FilterController extends AbstractController
         $query = $request->query->get('q');
         $season = $request->query->get('season');
         $diameter = $request->query->get('diameter');
+        $brand = $request->query->get('brand');
         $page = max(1, (int) $request->query->get('page', 1));
         $limit = (int) $request->query->get('limit', 24);
         $offset = ($page - 1) * $limit;
 
-        $products = $productRepository->findByFilters($query, $season, $diameter, $limit, $offset);
+        $products = $productRepository->findByFilters($query, $season, $diameter, $brand, $limit, $offset);
 
-        $total = $productRepository->countByFilters($query, $season, $diameter);
+        $total = $productRepository->countByFilters($query, $season, $diameter, $brand);
 
         $data = [];
         foreach ($products as $product) {
@@ -45,5 +46,11 @@ class FilterController extends AbstractController
             'total' => $total,
             'total_pages' => ceil($total / $limit),
         ]);
+    }
+    #[Route('/api/products/brands', name: 'api_products_brands', methods: ['GET'])]
+    public function brands(ProductRepository $productRepository): JsonResponse
+    {
+        $brands = $productRepository->getBrandsFromCategory();
+        return $this->json($brands);
     }
 }

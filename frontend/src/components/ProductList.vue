@@ -1,6 +1,7 @@
 <template>
-  <div class="max-w-6xl mx-auto p-6 space-y-6">
+  <div class="w-full mx-auto p-6 space-y-6">
     <!-- Szűrők -->
+     
     <div class="flex flex-col md:flex-row md:items-center md:gap-4 space-y-4 md:space-y-0">
       <input
         type="text"
@@ -20,6 +21,22 @@
         <option value="">Átmérő</option>
         <option v-for="d in diameters" :key="d" :value="d">{{ d }}"</option>
       </select>
+      <!-- Márka szűrés gombok -->
+<div class="flex flex-wrap gap-2">
+  <button
+    v-for="b in brands"
+    :key="b"
+    @click="toggleBrand(b)"
+    class="px-3 py-1 rounded-full text-sm border transition-all duration-150"
+    :class="{
+      'bg-red-600 text-white border-red-600': b === brand,
+      'bg-white text-gray-700 border-gray-300 hover:bg-gray-100': b !== brand
+    }"
+  >
+    {{ b }}
+  </button>
+</div>
+
       <button
         @click="clearFilters"
         class="w-full md:w-auto px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
@@ -44,7 +61,6 @@
         />
         <div class="p-4 mt-auto">
           <h2 class="text-lg font-semibold">{{ product.name }}</h2>
-          <p class="text-sm text-gray-600">{{ product.category }}</p>
           <div class="mt-2 flex items-center justify-between">
             <div>
               <p class="text-xl font-bold text-red-700">{{ product.price }} Ft</p>
@@ -84,10 +100,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted} from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+
 
 const products = ref<any[]>([])
 
@@ -95,6 +112,8 @@ const query = ref('')
 const season = ref('')
 const diameter = ref<number | ''>('')
 const diameters = [13, 14, 15, 16, 17, 18, 19, 20]
+const brand = ref('')
+const brands = ref<string[]>([])  
 
 const page = ref(1)
 const limit = 24
@@ -104,6 +123,7 @@ const cart = useCartStore()
 const route = useRoute()
 const router = useRouter()
 
+
 async function loadProducts() {
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/products/filter', {
@@ -111,6 +131,7 @@ async function loadProducts() {
         q: query.value,
         season: season.value,
         diameter: diameter.value || undefined,
+         brand: brand.value || undefined, 
         page: page.value,
         limit: limit,
       },
@@ -121,6 +142,14 @@ async function loadProducts() {
     console.error('Hiba a termékek lekérésekor:', error)
   }
 }
+onMounted(async () => {
+  try {
+    const res = await axios.get('http://127.0.0.1:8000/api/products/brands')
+    brands.value = res.data
+  } catch (error) {
+    console.error('Nem sikerült betölteni a márkákat:', error)
+  }
+})
 
 watch([query, season, diameter], () => {
   if (page.value !== 1) {
@@ -141,6 +170,7 @@ function updateRoute() {
       ...(query.value ? { q: query.value } : {}),
       ...(season.value ? { season: season.value } : {}),
       ...(diameter.value ? { diameter: diameter.value.toString() } : {}),
+      ...(brand.value ? { brand: brand.value } : {}),
       ...(page.value !== 1 ? { page: page.value.toString() } : {}),
     },
   })
@@ -153,6 +183,10 @@ watch(
     season.value = (route.query.season as string) || ''
     diameter.value = route.query.diameter ? Number(route.query.diameter) : ''
     page.value = route.query.page ? Number(route.query.page) : 1
+
+      const incomingBrand = (route.query.brand as string) || ''
+    brand.value = brands.value.includes(incomingBrand) ? incomingBrand : ''
+    
     loadProducts()
   },
   { immediate: true },
@@ -161,6 +195,7 @@ function clearFilters() {
   query.value = ''
   season.value = ''
   diameter.value = ''
+  brand.value = ''
   page.value = 1
 
   router.replace({
@@ -168,6 +203,36 @@ function clearFilters() {
     query: {},
   })
 }
+function toggleBrand(selected: string) {
+  if (brand.value === selected) {
+    brand.value = '' // kikapcsolás
+  } else {
+    brand.value = selected // új beállítás
+  }
+
+  page.value = 1
+  updateRoute()
+}
+
+function handleRemove(filterKey: 'query' | 'season' | 'diameter' | 'brand') {
+  switch (filterKey) {
+    case 'query':
+      query.value = ''
+      break
+    case 'season':
+      season.value = ''
+      break
+    case 'diameter':
+      diameter.value = ''
+      break
+    case 'brand':
+      brand.value = ''
+      break
+  }
+  page.value = 1
+  updateRoute()
+}
+
 
 async function addToCart(product: any) {
   try {
