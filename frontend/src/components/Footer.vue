@@ -22,7 +22,7 @@
       <!-- Linkek -->
       <ul class="flex gap-4 text-sm text-gray-600">
         <li>
-          <a href="#" class="hover:underline">Kapcsolat</a>
+          <a href="/contact" class="hover:underline">Kapcsolat</a>
         </li>
       </ul>
     </div>

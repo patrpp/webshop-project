@@ -2,8 +2,10 @@
 import { onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import type { CartItem } from '@/stores/cartStore'
+import { useRouter } from 'vue-router'
 
 const cart = useCartStore()
+const router = useRouter()
 
 onMounted(() => {
   cart.fetchCart()
@@ -108,7 +110,7 @@ function decrement(item: CartItem) {
 
       <button
         v-if="cart.items.length > 0"
-        @click="$router.push('/checkout')"
+        @click="router.push('/checkout')"
         class="btn-grad mt-4 w-full"
       >
         Megrendelés

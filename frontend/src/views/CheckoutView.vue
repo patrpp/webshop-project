@@ -101,32 +101,38 @@
         />
         <label for="address" class="floating-label">Utca / házszám</label>
       </div>
-      <button type="submit" class="btn-grad" :disabled="loading">
-        <template v-if="loading">
-          <svg
-            class="animate-spin h-5 w-5 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            ></path>
-          </svg>
-          Betöltés...
-        </template>
-        <template v-else> Megrendelés elküldése </template>
-      </button>
+      <div class="flex justify-center">
+        <button
+          type="submit"
+          class="btn-grad flex items-center justify-center gap-2 px-6 py-2 min-w-[100px]"
+          :disabled="loading"
+        >
+          <template v-if="loading">
+            <svg
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              ></path>
+            </svg>
+            <span>Betöltés...</span>
+          </template>
+          <template v-else> Megrendelés elküldése </template>
+        </button>
+      </div>
     </form>
   </div>
 </template>

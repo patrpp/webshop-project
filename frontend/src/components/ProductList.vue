@@ -139,6 +139,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Nem sikerült betölteni a márkákat:', error)
   }
+  await loadProducts() 
 })
 
 watch([query, season, diameter], () => {
