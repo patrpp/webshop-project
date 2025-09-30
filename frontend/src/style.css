@@ -40,6 +40,51 @@ body {
   @apply peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6;
   @apply peer-focus:text-blue-600 peer-focus:dark:text-red-500;
 }
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  position: relative;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  user-select: none;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 250px;
+}
+
+.toast-success {
+  background-color: #22c55e; /* zöld */
+}
+
+.toast-error {
+  background-color: #ef4444; /* piros */
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 1rem;
+  line-height: 1;
+  font-weight: bold;
+  user-select: none;
+}
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;

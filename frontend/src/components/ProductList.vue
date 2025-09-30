@@ -19,16 +19,16 @@
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            stroke-width="2"
           >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
+              d="M21 21l-4.35-4.35A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
             />
           </svg>
         </div>
       </div>
+
       <div class="relative w-full md:w-1/3">
         <span
           class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-red-600 pointer-events-none"
@@ -45,6 +45,7 @@
           <option value="4 évszakos">4 évszakos</option>
         </select>
       </div>
+
       <div class="relative w-full md:w-1/3">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -55,10 +56,9 @@
           viewBox="0 -960 960 960"
         >
           <path
-            d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+            d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"
           />
         </svg>
-
         <select
           v-model.number="diameter"
           class="w-full border border-gray-400 rounded-xl pl-12 pr-5 py-3 bg-white text-black focus:outline-none focus:ring-4 focus:ring-red-600 focus:border-red-600 shadow-md transition appearance-none"
@@ -67,6 +67,7 @@
           <option v-for="d in diameters" :key="d" :value="d">{{ d }}"</option>
         </select>
       </div>
+
       <button
         @click="clearFilters"
         class="w-full md:w-1/3 bg-red-700 hover:bg-red-800 text-white font-bold rounded-xl px-6 py-3 shadow-lg transition transform hover:scale-105"
@@ -110,7 +111,6 @@
           alt="Product image"
           class="w-full h-48 object-cover flex-grow"
         />
-
         <div class="p-4 mt-auto">
           <h2 class="text-lg font-semibold">{{ product.name }}</h2>
           <div class="mt-2 flex items-center justify-between">
@@ -149,11 +149,13 @@ import { ref, watch, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { useToastStore } from '@/stores/toastStore'
 
 const products = ref<any[]>([])
 const query = ref('')
 const season = ref('')
 const diameter = ref<number | ''>('')
+
 const diameters = [13, 14, 15, 16, 17, 18, 19, 20]
 const brand = ref<string[]>([])
 const brands = ref<string[]>([])
@@ -162,9 +164,10 @@ const page = ref(1)
 const limit = 24
 const totalPages = ref(1)
 
-const cart = useCartStore()
 const route = useRoute()
 const router = useRouter()
+const cart = useCartStore()
+const toast = useToastStore()
 
 async function loadProducts() {
   try {
@@ -258,9 +261,11 @@ async function addToCart(product: any) {
       price: product.price,
       image: product.image_url,
     })
-    alert(`${product.name} hozzáadva a kosárhoz!`)
+
+    toast.show(`${product.name} hozzáadva a kosárhoz!`, 'success')
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
+    toast.show('Hiba történt a kosárba helyezéskor.', 'error')
   }
 }
 </script>

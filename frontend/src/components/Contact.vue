@@ -1,21 +1,5 @@
 <template>
-  <transition name="fade">
-    <div
-      v-if="showToast"
-      class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-md z-50"
-    >
-      Üzeneted sikeresen elküldve!
-    </div>
-  </transition>
-
-  <transition name="fade">
-    <div
-      v-if="showErrorToast"
-      class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-md z-50"
-    >
-      Hiba történt, próbáld újra!
-    </div>
-  </transition>
+  <Toast v-model:visible="toast.visible" :message="toast.message" :type="toast.type" />
 
   <div class="min-h-screen flex flex-col items-center justify-center px-4">
     <div class="max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
@@ -102,6 +86,9 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import axios from 'axios'
+import { useToastStore } from '@/stores/toastStore'
+
+const toast = useToastStore()
 
 const contact = reactive({
   name: '',
@@ -110,30 +97,20 @@ const contact = reactive({
 })
 
 const loading = ref(false)
-const showToast = ref(false)
-const showErrorToast = ref(false)
 
 async function submitForm() {
   loading.value = true
   try {
     await axios.post('http://127.0.0.1:8000/api/contact', { ...contact })
 
-    showToast.value = true
+    toast.show('Üzenet sikeresen elküldve!', 'success')
 
-    // Mezők kiürítése
     contact.name = ''
     contact.email = ''
     contact.message = ''
-
-    setTimeout(() => {
-      showToast.value = false
-    }, 3000)
   } catch (error) {
     console.error('Hiba az üzenet küldésekor:', error)
-    showErrorToast.value = true
-    setTimeout(() => {
-      showErrorToast.value = false
-    }, 3000)
+    toast.show('Hiba történt az üzenet küldése során!', 'error')
   } finally {
     loading.value = false
   }

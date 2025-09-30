@@ -26,9 +26,11 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
+import { useToastStore } from '@/stores/toastStore'
 
 const route = useRoute()
 const cart = useCartStore()
+const toast = useToastStore()
 
 const product = ref(null)
 
@@ -41,7 +43,6 @@ onMounted(async () => {
     console.error('Hiba a termék betöltésekor:', error)
   }
 })
-
 async function addToCart(prod) {
   try {
     await cart.addToCart({
@@ -50,9 +51,10 @@ async function addToCart(prod) {
       price: prod.price,
       image: prod.image_url,
     })
-    alert(`${prod.name} hozzáadva a kosárhoz!`)
+    toast.show(`${prod.name} hozzáadva a kosárhoz!`, 'success')
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
+    toast.show('Hiba történt a kosárba helyezéskor.', 'error')
   }
 }
 </script>

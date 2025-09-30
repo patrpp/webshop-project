@@ -1,21 +1,4 @@
 <template>
-  <transition name="fade">
-    <div
-      v-if="showToast"
-      class="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-md z-50"
-    >
-      Köszönjük rendelését!
-    </div>
-  </transition>
-
-  <transition name="fade">
-    <div
-      v-if="showErrorToast"
-      class="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-md z-50"
-    >
-      Hiba történt a rendelés során!
-    </div>
-  </transition>
   <div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
     <h1 class="text-xl font-bold mb-4">Rendelési adatok:</h1>
     <form @submit.prevent="submitOrder" class="space-y-4">
@@ -141,8 +124,10 @@
 import { reactive, ref } from 'vue'
 import axios from 'axios'
 import { useCartStore } from '@/stores/cartStore'
+import { useToastStore } from '@/stores/toastStore'
 
 const cart = useCartStore()
+const toast = useToastStore()
 
 const order = reactive({
   name: '',
@@ -154,8 +139,6 @@ const order = reactive({
 })
 
 const loading = ref(false)
-const showToast = ref(false)
-const showErrorToast = ref(false)
 
 async function submitOrder() {
   loading.value = true
@@ -169,17 +152,12 @@ async function submitOrder() {
     console.log('Rendelés sikeres:', response.data)
 
     cart.clearCartFromServer()
-    showToast.value = true
-    setTimeout(() => {
-      showToast.value = false
-    }, 3000)
+
+    toast.show('Köszönjük rendelését!', 'success')
   } catch (error) {
     console.error('Hiba történt a rendelés során:', error)
 
-    showErrorToast.value = true
-    setTimeout(() => {
-      showErrorToast.value = false
-    }, 3000)
+    toast.show('Hiba történt a rendelés során!', 'error')
   } finally {
     loading.value = false
   }

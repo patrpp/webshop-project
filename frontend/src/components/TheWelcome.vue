@@ -2,8 +2,10 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useCartStore } from '@/stores/cartStore'
+import { useToastStore } from '@/stores/toastStore'
 
 const cart = useCartStore()
+const toast = useToastStore()
 
 const products = ref<Product[]>([])
 const randomProducts = ref<Product[]>([])
@@ -31,6 +33,7 @@ onMounted(async () => {
   }
 })
 
+
 async function addToCart(product: Product) {
   try {
     await cart.addToCart({
@@ -39,56 +42,15 @@ async function addToCart(product: Product) {
       price: product.price,
       image: '',
     })
-    triggerCartToast(`${product.name} sikeresen hozzáadva a kosárhoz!`)
+    toast.show(`${product.name} sikeresen hozzáadva a kosárhoz!`, 'success')
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)
-    showCartErrorToast.value = true
-    setTimeout(() => {
-      showCartErrorToast.value = false
-    }, 3000)
-    triggerCartErrorToast(`Hiba történt: ${error}`)
+    toast.show(`Hiba történt: ${error}`, 'error')
   }
-}
-
-const showCartToast = ref(false)
-const showCartErrorToast = ref(false)
-const cartToastMessage = ref('')
-
-function triggerCartToast(message: string) {
-  cartToastMessage.value = message
-  showCartToast.value = true
-  setTimeout(() => {
-    showCartToast.value = false
-  }, 3000)
-}
-
-function triggerCartErrorToast(message: string) {
-  cartToastMessage.value = message
-  showCartErrorToast.value = true
-  setTimeout(() => {
-    showCartErrorToast.value = false
-  }, 3000)
 }
 </script>
 
 <template>
-  <transition name="fade">
-    <div
-      v-if="showCartToast"
-      class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-md z-50"
-    >
-      {{ cartToastMessage }}
-    </div>
-  </transition>
-
-  <transition name="fade">
-    <div
-      v-if="showCartErrorToast"
-      class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-md z-50"
-    >
-      {{ cartToastMessage }}
-    </div>
-  </transition>
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     <router-link
       v-for="product in randomProducts"
