@@ -69,28 +69,26 @@ function triggerCartErrorToast(message: string) {
     showCartErrorToast.value = false
   }, 3000)
 }
-
 </script>
 
 <template>
- <transition name="fade">
-  <div
-    v-if="showCartToast"
-    class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-md z-50"
-  >
-    {{ cartToastMessage }}
-  </div>
-</transition>
+  <transition name="fade">
+    <div
+      v-if="showCartToast"
+      class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-md z-50"
+    >
+      {{ cartToastMessage }}
+    </div>
+  </transition>
 
-
-<transition name="fade">
-  <div
-    v-if="showCartErrorToast"
-    class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-md z-50"
-  >
-    {{ cartToastMessage }}
-  </div>
-</transition>
+  <transition name="fade">
+    <div
+      v-if="showCartErrorToast"
+      class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-md z-50"
+    >
+      {{ cartToastMessage }}
+    </div>
+  </transition>
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     <router-link
       v-for="product in randomProducts"
@@ -100,8 +98,7 @@ function triggerCartErrorToast(message: string) {
       @click.native.stop
     >
       <img
-        v-if="product.image_url"
-        :src="product.image_url"
+        :src="product.image_url || '/tires.png'"
         alt="Product image"
         class="w-full h-48 object-cover flex-grow"
       />

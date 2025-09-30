@@ -2,8 +2,7 @@
   <div class="max-w-4xl mx-auto p-6">
     <div v-if="product" class="bg-white rounded shadow p-6 flex flex-col md:flex-row gap-6">
       <img
-        v-if="product.image_url"
-        :src="product.image_url"
+        :src="product.image_url || '/tires.png'"
         alt="Product image"
         class="w-full md:w-1/2 object-cover rounded"
       />
