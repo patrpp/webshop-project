@@ -43,11 +43,12 @@
             >Kapcsolat</router-link
           >
         </nav>
-        <router-link to="/cart">
+        <router-link to="/cart" class="relative inline-flex items-center">
+          <span class="material-symbols-outlined text-8xl text-gray-800"> trolley </span>
           Kosár
           <span
             v-if="cart.items.length > 0"
-            class="ml-1 bg-red-600 text-white rounded-full px-2 py-0.5 text-xs"
+            class="top-1 -right-2 bg-red-600 text-white rounded-full px-1.5 py-0.5 text-xs font-bold shadow"
           >
             {{ cart.items.length }}
           </span>
