@@ -2,15 +2,13 @@
   <header class="bg-white shadow-md fixed w-full top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <div class="flex-shrink-0">
-          <router-link to="/">
-            <img
-              src="https://flotta.marso.hu/logos/marso_fekvo_logo.jpg"
-              alt="Marso Logo"
-              class="h-8 w-auto"
-            />
-          </router-link>
-        </div>
+        <router-link
+  to="/"
+  class="text-2xl font-extrabold text-gray-900 hover:text-red-600 transition-colors"
+>
+  Gumiabroncs katalógus
+</router-link>
+
         <!-- Menü gomb (mobil) -->
         <div class="md:hidden">
           <button @click="toggleMenu" class="text-gray-600 focus:outline-none">
