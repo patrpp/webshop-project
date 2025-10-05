@@ -35,12 +35,10 @@
         <nav class="hidden md:flex space-x-4">
           <router-link to="/" class="text-gray-700 hover:text-red-600">Főoldal</router-link>
           <router-link to="/products" class="text-gray-700 hover:text-red-600"
-            >Termékek</router-link
-          >
+            >Termékek</router-link>
           <router-link to="/about" class="text-gray-700 hover:text-red-600">Rólunk</router-link>
           <router-link to="/contact" class="text-gray-700 hover:text-red-600"
-            >Kapcsolat</router-link
-          >
+            >Kapcsolat</router-link>
         </nav>
         <router-link to="/cart" class="relative inline-flex items-center">
           <span class="material-symbols-outlined text-8xl text-gray-800"> trolley </span>
