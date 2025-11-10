@@ -149,7 +149,6 @@ async function submitOrder() {
     }
 
     const response = await axios.post('http://127.0.0.1:8000/api/order', payload)
-    console.log('Rendelés sikeres:', response.data)
 
     cart.clearCartFromServer()
 

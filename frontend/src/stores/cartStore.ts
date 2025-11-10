@@ -18,12 +18,10 @@ export const useCartStore = defineStore('cart', {
 
   actions: {
     async init() {
-      console.log('cart.init() hívva')
       await this.fetchCart()
       if (this.items.length === 0) {
         this.loadFromLocalStorage()
       }
-      console.log('init vége, items:', this.items, 'total:', this.total)
     },
 
     async fetchCart() {
@@ -50,8 +48,7 @@ export const useCartStore = defineStore('cart', {
         this.items = response.data.items
         this.total = response.data.total
         this.saveToLocalStorage()
-      } catch (error) {
-        console.error('Hiba a kosárhoz adáskor:', error)
+      } catch {
       }
     },
 
@@ -65,8 +62,7 @@ export const useCartStore = defineStore('cart', {
         this.items = response.data.items
         this.total = response.data.total
         this.saveToLocalStorage()
-      } catch (error) {
-        console.error('Hiba a mennyiség frissítésekor:', error)
+      } catch {
       }
     },
 
@@ -76,8 +72,7 @@ export const useCartStore = defineStore('cart', {
         this.items = response.data.items
         this.total = response.data.total
         this.saveToLocalStorage()
-      } catch (error) {
-        console.error('Hiba a kosárból törléskor:', error)
+      } catch {
       }
     },
 
@@ -86,9 +81,8 @@ export const useCartStore = defineStore('cart', {
         const response = await axios.post('/api/cart/clear', {}, { withCredentials: true })
         this.items = response.data.items
         this.total = response.data.total
-        this.clearCart() // törli a localStorage-t is
-      } catch (error) {
-        console.error('Hiba a kosár ürítésekor a szerveren:', error)
+        this.clearCart()
+      } catch {
       }
     },
 
@@ -115,8 +109,7 @@ export const useCartStore = defineStore('cart', {
           const parsed = JSON.parse(cartData)
           this.items = parsed.items || []
           this.total = parsed.total || 0
-        } catch (e) {
-          console.error('Hiba a localStorage betöltésekor:', e)
+        } catch {
         }
       }
     },
