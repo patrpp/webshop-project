@@ -24,15 +24,17 @@ class CartController extends AbstractController
     {
         $cart = $session->get('cart', []);
 
+        // Biztonság: mindig a DB-ből vesszük a termék adatait
         foreach ($cart as $id => $item) {
             $product = $this->productRepository->find($id);
             if ($product) {
+                $cart[$id]['name'] = $product->getName();
+                $cart[$id]['price'] = $product->getPrice();
                 $cart[$id]['image'] = $product->getImageUrl();
             }
         }
 
         $total = $this->calculateTotal($cart);
-
         $session->set('cart', $cart);
 
         return $this->json([
@@ -46,23 +48,27 @@ class CartController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['id'], $data['name'], $data['price'])) {
+        if (!isset($data['id'])) {
             return $this->json(['error' => 'Hiányzó adatok a kosárhoz adáshoz'], 400);
         }
 
         $id = $data['id'];
+        $product = $this->productRepository->find($id);
+
+        if (!$product) {
+            return $this->json(['error' => 'Termék nem található'], 404);
+        }
+
         $cart = $session->get('cart', []);
 
         if (isset($cart[$id])) {
             $cart[$id]['quantity']++;
         } else {
-            $product = $this->productRepository->find($id);
-
             $cart[$id] = [
                 'id' => $id,
-                'name' => $data['name'],
-                'price' => $data['price'],
-                'image' => $product ? $product->getImageUrl() : null,
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+                'image' => $product->getImageUrl(),
                 'quantity' => 1,
             ];
         }
@@ -95,6 +101,8 @@ class CartController extends AbstractController
 
             $product = $this->productRepository->find($id);
             if ($product) {
+                $cart[$id]['name'] = $product->getName();
+                $cart[$id]['price'] = $product->getPrice();
                 $cart[$id]['image'] = $product->getImageUrl();
             }
         }
@@ -127,6 +135,7 @@ class CartController extends AbstractController
             'total' => $total,
         ]);
     }
+
     #[Route('/clear', name: 'clear', methods: ['POST'])]
     public function clear(SessionInterface $session): JsonResponse
     {
@@ -137,7 +146,6 @@ class CartController extends AbstractController
             'total' => 0,
         ]);
     }
-
 
     private function calculateTotal(array $cart): float
     {

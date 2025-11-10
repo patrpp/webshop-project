@@ -64,7 +64,7 @@
           class="w-full border border-gray-400 rounded-xl pl-12 pr-5 py-3 bg-white text-black focus:outline-none focus:ring-4 focus:ring-red-600 focus:border-red-600 shadow-md transition appearance-none"
         >
           <option value="" disabled hidden>Átmérő</option>
-          <option v-for="d in diameters" :key="d" :value="d">{{ d }}"</option>
+          <option v-for="d in diameters" :key="d" :value="d">{{ d }}</option>
         </select>
       </div>
 
@@ -104,7 +104,7 @@
         :key="product.id"
         :to="`/products/${product.id}`"
         class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 min-h-[550px] flex flex-col no-underline text-inherit"
-        @click.native.stop
+        @click.stop
       >
         <img
           :src="product.image_url || '/tires.png'"
@@ -150,6 +150,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useToastStore } from '@/stores/toastStore'
+import { computed } from 'vue'
 
 const products = ref<any[]>([])
 const query = ref('')
@@ -168,6 +169,7 @@ const route = useRoute()
 const router = useRouter()
 const cart = useCartStore()
 const toast = useToastStore()
+const cartItems = computed(() => cart.items)
 
 async function loadProducts() {
   try {
@@ -253,14 +255,9 @@ function clearFilters() {
   updateRoute()
 }
 
-async function addToCart(product: any) {
+async function addToCart(product: { id: number,name: string }) {
   try {
-    await cart.addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image_url,
-    })
+    await cart.addToCart(product.id)
 
     toast.show(`${product.name} hozzáadva a kosárhoz!`, 'success')
   } catch (error) {
