@@ -19,7 +19,7 @@ interface ProductFilters {
 
 export async function fetchProducts(filters: ProductFilters): Promise<Product[]> {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/products/filter', {
+    const response = await axios.get('/products/filter', {
       params: {
         q: filters.q,
         diameter: filters.diameter,

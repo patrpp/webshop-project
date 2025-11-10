@@ -1,9 +1,8 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
 axios.defaults.withCredentials = true
 
-// --- Típusdefiníciók ---
 export interface CartItem {
   id: number
   name: string
@@ -23,10 +22,8 @@ export interface AddItemRequest {
   price: number
 }
 
-// --- API endpoint ---
-const API_URL = 'http://127.0.0.1:8000/api/cart'
+const API_URL = '/cart'
 
-// --- API függvények ---
 export const getCart = (): Promise<CartResponse> =>
   axios.get<CartResponse>(API_URL).then(res => res.data)
 

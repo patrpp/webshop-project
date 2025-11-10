@@ -150,7 +150,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useToastStore } from '@/stores/toastStore'
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const products = ref<any[]>([])
 const query = ref('')
@@ -173,7 +173,7 @@ const cartItems = computed(() => cart.items)
 
 async function loadProducts() {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/products/filter', {
+    const response = await axios.get('/products/filter', {
       params: {
         q: query.value,
         season: season.value,
@@ -192,7 +192,7 @@ async function loadProducts() {
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/products/brands')
+    const res = await axios.get('/products/brands')
     brands.value = res.data
   } catch (error) {
     console.error('Nem sikerült betölteni a márkákat:', error)

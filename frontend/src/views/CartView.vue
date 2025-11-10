@@ -41,7 +41,7 @@ function decrement(item: CartItem) {
             <img
               v-if="item.image"
               :src="
-                item.image.startsWith('http') ? item.image : 'http://127.0.0.1:8000' + item.image
+                item.image.startsWith('http') ? item.image : import.meta.env.VITE_API_BASE_URL + item.image
               "
               alt="Product image"
               class="w-full h-full object-cover"

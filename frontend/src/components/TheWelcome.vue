@@ -25,7 +25,7 @@ function getRandomProducts(allProducts: Product[], count: number): Product[] {
 
 onMounted(async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/products')
+    const response = await axios.get('/products')
     products.value = response.data
     randomProducts.value = getRandomProducts(products.value, 4)
   } catch (error) {
@@ -36,12 +36,7 @@ onMounted(async () => {
 
 async function addToCart(product: Product) {
   try {
-    await cart.addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: '',
-    })
+    await cart.addToCart(product.id)
     toast.show(`${product.name} sikeresen hozzáadva a kosárhoz!`, 'success')
   } catch (error) {
     console.error('Hiba a kosárba helyezéskor:', error)

@@ -37,7 +37,7 @@ const product = ref(null)
 onMounted(async () => {
   try {
     const { id } = route.params
-    const response = await axios.get(`http://127.0.0.1:8000/api/products/${id}`)
+    const response = await axios.get(`/products/${id}`)
     product.value = response.data
   } catch (error) {
     console.error('Hiba a termék betöltésekor:', error)

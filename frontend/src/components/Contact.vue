@@ -87,6 +87,7 @@
 import { reactive, ref } from 'vue'
 import axios from 'axios'
 import { useToastStore } from '@/stores/toastStore'
+import { api } from '@/api'
 
 const toast = useToastStore()
 
@@ -101,7 +102,7 @@ const loading = ref(false)
 async function submitForm() {
   loading.value = true
   try {
-    await axios.post('http://127.0.0.1:8000/api/contact', { ...contact })
+    await axios.post('/contact', { ...contact })
 
     toast.show('Üzenet sikeresen elküldve!', 'success')
 
